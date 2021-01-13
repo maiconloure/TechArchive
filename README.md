@@ -120,6 +120,7 @@ body
 
 ```json
 {
+  "news": {
     "title": "Livro",
     "author": "Author",
     "content": "Long text",
