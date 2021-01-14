@@ -3,12 +3,9 @@ from app.models.flask_models import News, db, NewsSchema
 from http import HTTPStatus
 from sqlalchemy.exc import IntegrityError
 from app.services.http import build_api_response
-import hashlib
-from datetime import datetime
-from pytz import timezone
+from app.services.news_services import service_alter_news_information
 
 bp_news = Blueprint('api_news', __name__, url_prefix='/news')
-fuso_horario = timezone('America/Sao_Paulo')
 news_schema = NewsSchema
 
 
@@ -66,34 +63,5 @@ def delete_news(news_id):
 
 @bp_news.route('/<user_id>/<news_id>', methods=['PATCH'])
 def patch_news(news_id):
-    if News.query.filter_by(id=news_id).first() is not None:
-        data = request.get_json()
-        news = News.query.get(news_id)
-
-        news.title = data['title'] if data.get(
-            'title') else news.title
-
-        news.subtitle = data['subtitle'] if data.get(
-            'subtitle') else news.subtitle
-
-        news.content = data['content'] if data.get(
-            'content') else news.content
-
-        news.upvotes = data['upvotes'] if data.get(
-            'upvotes') else news.upvotes
-
-        news.downvotes = data['downvotes'] if data.get(
-            'downvotes') else news.downvotes
-
-        news.create_at = data['create_at'] if data.get(
-            'create_at') else news.create_at
-
-        news.approved = data['approved'] if data.get(
-            'approved') else news.approved
-
-        news.author = data['author'] if data.get(
-            'author') else news.author
-
-        db.session.commit()
-        
+    service_alter_news_information(news_id)
     return {'news excluded'},HTTPStatus.OK
