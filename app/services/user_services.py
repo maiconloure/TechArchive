@@ -5,6 +5,7 @@ def serialize_user(user):
         'name': user.name,
         'description': user.description,
         'email': user.email,
+        'user_type': user.user_type,
         'created_at': user.create_at
     }
 

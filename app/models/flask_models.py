@@ -22,7 +22,8 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     create_at = db.Column(db.String, unique=False, nullable=True)
     password = db.Column(db.String(1024), unique=False, nullable=False)
-    user_type = db.Column(db.String(50), unique=False, nullable=True)
+    user_type = db.Column(db.String(50), default="Viewer",
+                          unique=False, nullable=True)
 
     def __repr__(self):
         return f'''<User id={self.id} name={self.name} 
@@ -58,6 +59,7 @@ class Category(db.Model):
 
 
 class UserSchema(ma.SQLAlchemySchema):
+
     class Meta:
         model = User
 
@@ -71,6 +73,7 @@ class UserSchema(ma.SQLAlchemySchema):
 
 
 class NewsSchema(ma.SQLAlchemySchema):
+
     class Meta:
         model = News
 
@@ -86,6 +89,7 @@ class NewsSchema(ma.SQLAlchemySchema):
 
 
 class CategorySchema(ma.SQLAlchemySchema):
+
     class Meta:
         model = Category
 

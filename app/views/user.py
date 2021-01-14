@@ -3,7 +3,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.models.flask_models import User, db, UserSchema
 from http import HTTPStatus
 from sqlalchemy.exc import IntegrityError
-from app.services.user_services import serialize_user_list
+from app.services.user_services import serialize_user_list, serialize_user
+from app.services.http import build_api_response
 import hashlib
 from datetime import datetime
 from pytz import timezone
@@ -21,6 +22,18 @@ def list_all():
     }, HTTPStatus.OK
 
 
+@bp_users.route('/<user_id>')
+def get_user(user_id):
+    if User.query.filter_by(id=user_id).first() is not None:
+        user = User.query.filter_by(id=user_id).first()
+    else:
+        return build_api_response(HTTPStatus.NOT_FOUND)
+
+    return {
+        'data': serialize_user(user)
+    }, HTTPStatus.OK
+
+
 @bp_users.route('/', methods=['POST'])
 def create():
     data = request.get_json()
@@ -33,19 +46,49 @@ def create():
         ).astimezone(fuso_horario).strftime('%d/%m/%Y %H:%M:%S'),
     )
 
-    # Para descriptografar a senha, basta criptografar a senha de entrada na tela de login
+    # Para descriptografar a senha, basta criptografar a senha de entrada da tela de login
     # e comparar com a senha criptografada no banco de dados, os hashs deverão ser iguais.
 
     try:
         db.session.add(user)
         db.session.commit()
-        return 'OK', HTTPStatus.CREATED
+        return build_api_response(HTTPStatus.CREATED)
 
     except IntegrityError:
-        return 'ERROR', HTTPStatus.BAD_REQUEST
+        return build_api_response(HTTPStatus.BAD_REQUEST)
 
 
-@bp_users.route('/<user_id>', methods=['POST'])
+@bp_users.route('/<user_id>', methods=['PATCH'])
+def update(user_id):
+
+    if User.query.filter_by(id=user_id).first() is not None:
+        data = request.get_json()
+        user = User.query.get(user_id)
+
+        user.name = data['name'] if data.get(
+            'name') else user.name
+
+        user.description = data['description'] if data.get(
+            'description') else user.description
+
+        user.email = data['email'] if data.get(
+            'email') else user.email
+
+        user.password = hashlib.sha256(data['password'].encode('utf-8')).hexdigest() if data.get(
+            'password') else user.password
+
+        user.user_type = data['user_type'] if data.get(
+            'user_type') else user.user_type
+
+        db.session.commit()
+
+    else:
+        return build_api_response(HTTPStatus.NOT_FOUND)
+
+    return build_api_response(HTTPStatus.OK)
+
+
+@bp_users.route('/<user_id>', methods=['DELETE'])
 def delete(user_id):
     if User.query.filter_by(id=user_id).first() is not None:
         user = User.query.filter_by(id=user_id).delete()
