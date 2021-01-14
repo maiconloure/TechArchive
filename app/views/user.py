@@ -5,7 +5,10 @@ from http import HTTPStatus
 from sqlalchemy.exc import IntegrityError
 from app.services.user_services import serialize_user_list
 import hashlib
+from datetime import datetime
+from pytz import timezone
 
+fuso_horario = timezone('America/Sao_Paulo')
 bp_users = Blueprint('api_users', __name__, url_prefix='/users')
 
 
@@ -26,6 +29,8 @@ def create():
         description=data['description'],
         email=data['email'],
         password=hashlib.sha256(data['password'].encode('utf-8')).hexdigest(),
+        create_at=datetime.now(
+        ).astimezone(fuso_horario).strftime('%d/%m/%Y %H:%M:%S'),
     )
 
     try:

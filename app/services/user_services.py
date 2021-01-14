@@ -5,7 +5,7 @@ def serialize_user(user):
         'name': user.name,
         'description': user.description,
         'email': user.email,
-        'created_at': user.create_at if f'{user.create_at}' != 'null' else ' '
+        'created_at': user.create_at
     }
 
 

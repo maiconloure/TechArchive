@@ -1,8 +1,8 @@
 """Initial migration.
 
-Revision ID: c0658d261496
+Revision ID: b3ec8f39b084
 Revises: 
-Create Date: 2021-01-14 00:12:54.526212
+Create Date: 2021-01-14 00:32:09.399304
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c0658d261496'
+revision = 'b3ec8f39b084'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -29,8 +29,7 @@ def upgrade():
     sa.Column('name', sa.String(length=80), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
     sa.Column('email', sa.String(length=120), nullable=False),
-    sa.Column('create_at', sa.DateTime(), nullable=True),
-    sa.Column('update_at', sa.DateTime(), nullable=True),
+    sa.Column('create_at', sa.String(), nullable=True),
     sa.Column('password', sa.String(length=1024), nullable=False),
     sa.Column('user_type', sa.String(length=50), nullable=True),
     sa.PrimaryKeyConstraint('id'),
@@ -43,8 +42,7 @@ def upgrade():
     sa.Column('content', sa.Text(), nullable=False),
     sa.Column('upvotes', sa.Integer(), nullable=True),
     sa.Column('downvotes', sa.Integer(), nullable=True),
-    sa.Column('create_at', sa.DateTime(), nullable=True),
-    sa.Column('update_at', sa.DateTime(), nullable=True),
+    sa.Column('create_at', sa.String(), nullable=True),
     sa.Column('approved', sa.Boolean(), nullable=True),
     sa.Column('author', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['author'], ['user.id'], ),
