@@ -57,7 +57,7 @@ body
 }
 ```
 
-## post /user -> Cria um usuário
+## POST /user -> Cria um usuário
 
 body
 
