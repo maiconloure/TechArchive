@@ -4,12 +4,15 @@
 
 Para iniciar sua API localmente execute os seguintes comandos, nesta ordem:
 
->iniciar Banco de Dados
+> iniciar Banco de Dados
+
 ```sh
 psql -u user_name
 CREATE DATABASE techarchive;
 ```
+
 > Configurar o ambiente
+
 ```sh
 Create .env file
 copy content of .env.example to .env
@@ -17,12 +20,14 @@ rename you user_name and password in .env
 ```
 
 > Configurar e instalar dependencias
+
 ```sh
 python -m venv venv
 pip install -r requirements.txt
 flask db upgrade
 flask run
 ```
+
 # Rotas
 
 ## Base URL
@@ -39,7 +44,9 @@ Content-Type: application/json
 
 # Endpoints
 
-## POST /login
+# Usuários
+
+## POST /login -> Autentica o usuário
 
 body
 
@@ -50,22 +57,20 @@ body
 }
 ```
 
-## post /user/create
+## post /user -> Cria um usuário
 
 body
 
 ```json
 {
-  "user": {
-    "name": "name",
-    "admin": bool,
-    "email": "test@test.com",
-    "password": "1234"
-  }
+  "name": "Nome Completo",
+  "description": "breve descrição",
+  "email": "email.example@gmail.com",
+  "password": "123456"
 }
 ```
 
-## GET /users
+## GET /users -> Retorna uma um lista com todos os usuarios cadastrados
 
 headers
 
@@ -73,7 +78,7 @@ headers
 Authorization: <TOKEN>
 ```
 
-## GET /users/:id
+## GET /user/:id -> Retorna o usuario pelo seu id
 
 headers
 
@@ -81,7 +86,7 @@ headers
 Authorization: <TOKEN>
 ```
 
-## DELETE /users/:id
+## DELETE /user/:id -> Deleta o usuario pelo seu id
 
 headers
 
@@ -89,9 +94,7 @@ headers
 Authorization: <TOKEN>
 ```
 
-## PATCH /users/:id
-
-Just send what you want to change.
+## PATCH /user/:id -> Atualiza o usuario com o user_id(\*todos os parametros são opcionais)
 
 headers
 
@@ -103,19 +106,19 @@ body
 
 ```json
 {
-  "user": {
-    "name": "name",
-    "email": "test@test.com",
-    "password": "1234"
+  "name": "Nome Completo",
+	"description": "breve descrição",
+	"email": "email.example@gmail.com",
+	"password": "123456"
   }
 }
 ```
 
 # Noticias
 
-## GET /news
+## GET /news -> Retorna todas as noticías
 
-## GET /news/:user_id/:news_id/
+## GET /news/:user_id/ -> Retorna todas as noticias de um usuário
 
 headers
 
@@ -123,7 +126,15 @@ headers
 Authorization: <TOKEN>
 ```
 
-## PATCH /news/:user_id/:news_id
+## GET /news/:user_id/:news_id/ -> Retorna a noticia de um usuário por id
+
+headers
+
+```
+Authorization: <TOKEN>
+```
+
+## PATCH /news/:user_id/:news_id -> Modifica a noticia de um usuário por id
 
 Just send what you want to change.
 
@@ -150,7 +161,7 @@ body
 }
 ```
 
-## DELETE /news/:user_id/:news_id
+## DELETE /news/:user_id/:news_id -> Deleta a noticia de um usuário por id
 
 headers
 
@@ -158,7 +169,7 @@ headers
 Authorization: <TOKEN>
 ```
 
-## POST /news/:user_id/create/
+## POST /news/:user_id/ -> Cria uma notícia
 
 headers
 
@@ -181,40 +192,4 @@ body
     "approved": bool
   }
 }
-```
-
-## #**Rotas prontas**
-
-> ## User
-
-```sh
-GET /users/ -> retorna uma um lista com todos os usuarios cadastrados
-
-GET /users/user_id -> retorna o usuario pelo seu id
-```
-
-```sh
-> POST /users/ -> Cria um usuário
-
-{
-	"name": "Nome Completo",
-	"description": "breve descrição",
-	"email": "email.example@gmail.com",
-	"password": "123456"
-}
-```
-
-```sh
-> PATCH /users/user_id -> Atualiza o usuario com o user_id(*todos os parametros são opcionais)
-
-{
-	"name": "Nome Completo",
-	"description": "breve descrição",
-	"email": "email.example@gmail.com",
-	"password": "123456"
-}
-```
-
-```sh
-> DELETE /users/user_id -> Delete o usuario com o user_id
 ```
