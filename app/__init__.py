@@ -1,6 +1,7 @@
 from flask import Flask
 from app.models.flask_models import db, mg, ma
 from app.views.user import bp_users
+from app.views.news import bp_news
 from environs import Env
 
 
@@ -18,5 +19,5 @@ def create_app():
     ma.init_app(app)
 
     app.register_blueprint(bp_users)
-
+    app.register_blueprint(bp_news)
     return app
