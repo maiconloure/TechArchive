@@ -12,7 +12,8 @@ CREATE DATABASE techarchive;
 > Configurar o ambiente
 ```sh
 Create .env file
-Copy you user_name and passworld to .env
+copy content of .env.example to .env
+rename you user_name and password in .env
 ```
 
 > Configurar e instalar dependencias
