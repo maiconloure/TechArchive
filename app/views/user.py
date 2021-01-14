@@ -33,6 +33,9 @@ def create():
         ).astimezone(fuso_horario).strftime('%d/%m/%Y %H:%M:%S'),
     )
 
+    # Para descriptografar a senha, basta criptografar a senha de entrada na tela de login
+    # e comparar com a senha criptografada no banco de dados, os hashs deverão ser iguais.
+
     try:
         db.session.add(user)
         db.session.commit()
@@ -40,3 +43,15 @@ def create():
 
     except IntegrityError:
         return 'ERROR', HTTPStatus.BAD_REQUEST
+
+
+@bp_users.route('/<user_id>', methods=['POST'])
+def delete(user_id):
+    if User.query.filter_by(id=user_id).first() is not None:
+        user = User.query.filter_by(id=user_id).delete()
+        db.session.commit()
+
+    else:
+        return build_api_response(HTTPStatus.NOT_FOUND)
+
+    return build_api_response(HTTPStatus.OK)
