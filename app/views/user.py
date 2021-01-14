@@ -10,10 +10,10 @@ from datetime import datetime
 from pytz import timezone
 
 fuso_horario = timezone('America/Sao_Paulo')
-bp_users = Blueprint('api_users', __name__, url_prefix='/users')
+bp_users = Blueprint('api_users', __name__)
 
 
-@bp_users.route('/')
+@bp_users.route('/users')
 def list_all():
     users = User.query.all()
 
@@ -22,7 +22,7 @@ def list_all():
     }, HTTPStatus.OK
 
 
-@bp_users.route('/<user_id>')
+@bp_users.route('/user/<user_id>')
 def get_user(user_id):
     if User.query.filter_by(id=user_id).first() is not None:
         user = User.query.filter_by(id=user_id).first()
@@ -34,7 +34,7 @@ def get_user(user_id):
     }, HTTPStatus.OK
 
 
-@bp_users.route('/', methods=['POST'])
+@bp_users.route('/user', methods=['POST'])
 def create():
     data = request.get_json()
     user = User(
@@ -58,7 +58,7 @@ def create():
         return build_api_response(HTTPStatus.BAD_REQUEST)
 
 
-@bp_users.route('/<user_id>', methods=['PATCH'])
+@bp_users.route('/user/<user_id>', methods=['PATCH'])
 def update(user_id):
 
     if User.query.filter_by(id=user_id).first() is not None:
@@ -88,7 +88,7 @@ def update(user_id):
     return build_api_response(HTTPStatus.OK)
 
 
-@bp_users.route('/<user_id>', methods=['DELETE'])
+@bp_users.route('/user/<user_id>', methods=['DELETE'])
 def delete(user_id):
     if User.query.filter_by(id=user_id).first() is not None:
         user = User.query.filter_by(id=user_id).delete()
