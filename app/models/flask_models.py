@@ -1,7 +1,110 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_marshmallow import Marshmallow 
+from flask_marshmallow import Marshmallow
+from datetime import datetime, timedelta, timezone
 
 db = SQLAlchemy()
 mg = Migrate()
 ma = Marshmallow()
+
+
+news_category = db.Table(
+    'news_category',
+    db.Column('news_id', db.Integer, db.ForeignKey('news.id')),
+    db.Column('category_id', db.Integer, db.ForeignKey('category.id'))
+)
+
+
+class User(db.Model):
+    diferenca = timedelta(hours=-3)
+    fuso_horario = timezone(diferenca)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), unique=False, nullable=False)
+    description = db.Column(db.String, unique=False, nullable=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    create_at = db.Column(db.DateTime, default=datetime.now(
+    ).astimezone(fuso_horario).strftime("%d/%m/%Y %H:%M"))
+    update_at = db.Column(db.DateTime, onupdate=datetime.now(
+        fuso_horario).astimezone(fuso_horario).strftime("%d/%m/%Y %H:%M"))
+    password = db.Column(db.String(1024), unique=False, nullable=False)
+    user_type = db.Column(db.String(50), unique=False, nullable=True)
+
+    def __repr__(self):
+        return f'''<User id={self.id} name={self.name} 
+        description{self.description} email={self.email} 
+        create_at={self.create_at} update_at={self.update_at}
+        password={self.password} user_type={self.user_type} >'''
+
+
+class News(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(50), unique=True, nullable=False)
+    subtitle = db.Column(db.String(500), unique=False, nullable=True)
+    content = db.Column(db.Text, unique=True, nullable=False)
+    upvotes = db.Column(db.Integer, default=0, unique=False, nullable=True)
+    downvotes = db.Column(db.Integer, default=0, unique=False, nullable=True)
+    create_at = db.Column(db.DateTime, default=datetime.utcnow)
+    update_at = db.Column(db.DateTime, onupdate=datetime.utcnow)
+    approved = db.Column(db.Boolean, default=False, nullable=True)
+    author = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __repr__(self):
+        return f'''<News id={self.id} title={self.title} subtitle={self.subtitle} 
+                    author={self.author} content={self.content[:10]} 
+                    upvotes={self.upvotes} downvotes={self.downvotes} 
+                    created_at={self.created_at} updated_at={self.updated_at} 
+                    approved={self.approved} >'''
+
+
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True, nullable=False)
+
+    def __repr__(self):
+        return f'<Category id={self.id} name={self.name} >'
+
+
+class UserSchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = User
+
+    id = ma.auto_field()
+    name = ma.auto_field()
+    description = ma.auto_field()
+    email = ma.auto_field()
+    create_at = ma.auto_field()
+    update_at = ma.auto_field()
+    password = ma.auto_field()
+    user_type = ma.auto_field()
+
+
+class NewsSchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = News
+
+    id = ma.auto_field()
+    title = ma.auto_field()
+    subtitle = ma.auto_field()
+    content = ma.auto_field()
+    upvotes = ma.auto_field()
+    downvotes = ma.auto_field()
+    create_at = ma.auto_field()
+    update_at = ma.auto_field()
+    approved = ma.auto_field()
+    author = ma.auto_field()
+
+
+class CategorySchema(ma.SQLAlchemySchema):
+    class Meta:
+        model = Category
+
+    id = ma.auto_field()
+    name = ma.auto_field()
+
+
+# class NewsCategorySchema(ma.SQLAlchemySchema):
+#     class Meta:
+#         model = news_category
+
+#     news_id = ma.auto_field()
+#     category_id = ma.auto_field()
