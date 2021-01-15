@@ -6,7 +6,7 @@ from app.services.http import build_api_response
 from app.services.news_services import service_alter_news_information
 
 bp_news = Blueprint('api_news', __name__, url_prefix='/news')
-news_schema = NewsSchema
+news_schema = NewsSchema()
 
 
 @bp_news.route('/', methods=['GET'])
@@ -19,19 +19,19 @@ def get_all_news():
 
 
 @bp_news.route('/<user_id>/<news_id>', methods=['GET'])
-def get_news(news_id):
-    filtered_news = News.query.filter_by(id=news_id).first()
+def get_news(user_id,news_id):
+    filtered_news = News.query.filter_by(id=news_id).first() 
     news = news_schema.dump(filtered_news)
     return {
         'data': news
     }, HTTPStatus.OK
 
 
-@bp_news.route('/<user_id>/create')
+@bp_news.route('/<user_id>/create',methods=['POST'])
 def create_news(user_id):
     data = request.get_json()
+    print(data)
     news = News(
-        id = data['id'],
         title = data['title'],
         subtitle = data['subtitle'],
         content = data['content'],
@@ -39,17 +39,17 @@ def create_news(user_id):
         downvotes = data['downvotes'],
         create_at = data['create_at'],
         approved = data['approved'],
-        author = data['author']
+        author = user_id
     )
     try:
         db.session.add(news)
         db.session.commit()
         return {
-            'data': news
+            'data': f'{news}'
         }, HTTPStatus.OK
     except:
         return {
-            'data': news
+            'data': f'{news}'
         }, HTTPStatus.BAD_REQUEST
     
 
