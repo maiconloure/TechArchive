@@ -47,7 +47,7 @@ class News(db.Model):
         return f'''<News id={self.id} title={self.title} subtitle={self.subtitle} 
                     author={self.author} content={self.content[:10]} 
                     upvotes={self.upvotes} downvotes={self.downvotes} 
-                    create_at={self.create_at} approved={self.approved} >'''
+                    created_at={self.created_at} approved={self.approved} >'''
 
 
 class Category(db.Model):
