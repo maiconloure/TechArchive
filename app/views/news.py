@@ -62,5 +62,6 @@ def delete_news(news_id):
 
 @bp_news.route('/<user_id>/<news_id>', methods=['PATCH'])
 def patch_news(news_id):
-    service_alter_news_information(news_id)
+    data = request.get_json()
+    service_alter_news_information(news_id,data)
     return {'news altered'},HTTPStatus.OK
