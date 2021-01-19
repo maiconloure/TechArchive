@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from app.models.flask_models import News, db, NewsSchema
+from app.models.flask_models import News,Category, db, NewsSchema
 from http import HTTPStatus
 from sqlalchemy.exc import IntegrityError
 from app.services.http import build_api_response
@@ -41,18 +41,16 @@ def create_news(user_id):
         author = user_id
     )
     
-    for category_id in news["categories"]:
-        print(category_id)
-    try:
-        db.session.add(news)
-        db.session.commit()
-        return {
-            'data': f'{news}'
-        }, HTTPStatus.OK
-    except:
-        return {
-            'data': f'{news}'
-        }, HTTPStatus.BAD_REQUEST
+    for category_id in list(data["categories"]):
+        filtered_category = Category.query.filter_by(id=category_id).first()
+        news.news_category.append(filtered_category) 
+
+    db.session.add(news)
+    db.session.commit()
+    return {
+        'data': f'{news}'
+    }, HTTPStatus.OK
+
     
 
 @bp_news.route('/<user_id>/<news_id>', methods=['DELETE'])
