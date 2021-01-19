@@ -40,11 +40,10 @@ def create_news(user_id):
         approved = data['approved'],
         author = user_id
     )
-    
-    for category_id in list(data["categories"]):
-        filtered_category = Category.query.filter_by(id=category_id).first()
-        news.news_category.append(filtered_category) 
-
+    if "categories" in data:
+        for category_id in list(data["categories"]):
+            filtered_category = Category.query.filter_by(id=category_id).first()
+            news.news_category.append(filtered_category) 
     db.session.add(news)
     db.session.commit()
     return {
@@ -64,4 +63,4 @@ def delete_news(news_id):
 @bp_news.route('/<user_id>/<news_id>', methods=['PATCH'])
 def patch_news(news_id):
     service_alter_news_information(news_id)
-    return {'news excluded'},HTTPStatus.OK
+    return {'news altered'},HTTPStatus.OK
