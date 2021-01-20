@@ -1,4 +1,8 @@
+from pytest import fail
+from werkzeug.exceptions import NotFound
+
 import requests
+
 base_url = "http://127.0.0.1:5000/news/"
 headers = {
     "accept": "*/*",
@@ -7,7 +11,7 @@ headers = {
 
 
 
-def test_get_all_news_return_information():
+def test_get_all_news_route_exists():
     data = requests.get(base_url, headers=headers)
     answer = requests.get(base_url, headers=headers)
     expected = 200
