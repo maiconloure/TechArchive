@@ -1,10 +1,11 @@
 from flask import Blueprint, request
-from app.services.user_services import create_user
 from flask_jwt_extended import create_access_token
-from app.models.flask_models import User
 from datetime import timedelta
-from app.services.http import build_api_response
 from http import HTTPStatus
+
+from app.services.user_services import create_user
+from app.services.http import build_api_response
+from app.models import User
 
 bp_auth = Blueprint('auth', __name__, url_prefix='/')
 

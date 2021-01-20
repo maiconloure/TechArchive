@@ -1,13 +1,16 @@
+import hashlib
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.models.flask_models import User, db, UserSchema
 from http import HTTPStatus
 from sqlalchemy.exc import IntegrityError
-from app.services.user_services import serialize_user_list, serialize_user
-from app.services.http import build_api_response
-import hashlib
 from datetime import datetime
 from pytz import timezone
+
+from app.schema.user_schema import UserSchema
+from app.models import User
+from app.services.user_services import serialize_user_list, serialize_user
+from app.services.http import build_api_response
+from app.schema.news_schema import NewsSchema
 
 fuso_horario = timezone('America/Sao_Paulo')
 bp_users = Blueprint('api_users', __name__)
