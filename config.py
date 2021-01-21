@@ -14,7 +14,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     ENV = 'development'
-    SQLALCHEMY_DATABASE_URI = 'postgresql://kaio:123456@localhost/techarchive'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://dev_q3:123456@172.29.150.47/techarchive'
     DEBUG = True
 
 
@@ -30,6 +30,6 @@ class ProductionConfig(Config):
     JWT_SECRET_KEY = env.str('JWT_SECRET_KEY')
     SECRET_KEY = env.str('SECRET_KEY')
 
-    config_selector={
+    config_selector = {
 
     }

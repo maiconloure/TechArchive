@@ -18,7 +18,7 @@ def create_app(config='production'):
         'SQLALCHEMY_TRACK_MODIFICATIONS')
     app.config['SQLALCHEMY_DATABASE_URI'] = env.str('SQLALCHEMY_DATABASE_URI')
 
-    app.config['JWT_SECRET_KEY'] = token_hex(16)
+    app.config['JWT_SECRET_KEY'] = token_hex(32)
     config_db(app)
     config_serializer(app)
     Migrate(app, db)
