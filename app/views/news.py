@@ -1,8 +1,8 @@
 from flask import Blueprint, request
 from http import HTTPStatus
 from sqlalchemy.exc import IntegrityError
-
-from app.models.news_model import db,News
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.models.news_model import db, News
 from app.models.category_model import Category
 from app.models.news_category_model import news_category
 from app.schema.news_schema import NewsSchema
@@ -22,8 +22,8 @@ def get_all_news():
     }, HTTPStatus.OK
 
 
-@bp_news.route('/<user_id>/<news_id>', methods=['GET'])
-def get_news(user_id, news_id):
+@bp_news.route('/<news_id>', methods=['GET'])
+def get_news(news_id):
     filtered_news = News.query.filter_by(id=news_id).first()
     news = news_schema.dump(filtered_news)
     return {
@@ -31,8 +31,10 @@ def get_news(user_id, news_id):
     }, HTTPStatus.OK
 
 
-@bp_news.route('/<user_id>/create', methods=['POST'])
-def create_news(user_id):
+@bp_news.route('/create', methods=['POST'])
+@jwt_required
+def create_news():
+    user_id = get_jwt_identity()
     data = request.get_json()
     news = News(
         title=data['title'],
@@ -40,7 +42,6 @@ def create_news(user_id):
         content=data['content'],
         upvotes=data['upvotes'],
         downvotes=data['downvotes'],
-        create_at=data['create_at'],
         approved=data['approved'],
         author=user_id
     )
@@ -52,20 +53,36 @@ def create_news(user_id):
     db.session.add(news)
     db.session.commit()
     return {
-        'data': f'{news}'
+        'data': news_schema.dump(news)
     }, HTTPStatus.OK
 
 
-@bp_news.route('/<user_id>/<news_id>', methods=['DELETE'])
+@bp_news.route('/<news_id>', methods=['DELETE'])
+@jwt_required
 def delete_news(news_id):
-    news = News.query.get_or_404(news_id)
-    db.session.delete(news)
-    db.session.commit()
-    return {'news excluded'}, HTTPStatus.OK
+    user_id = get_jwt_identity()
+
+    if News.query.filter_by(id=news_id).first() is not None:
+        news = News.query.get_or_404(news_id)
+        db.session.delete(news)
+        db.session.commit()
+
+    else:
+        return build_api_response(HTTPStatus.NOT_FOUND)
+
+    return build_api_response(HTTPStatus.OK)
 
 
-@bp_news.route('/<user_id>/<news_id>', methods=['PATCH'])
+@bp_news.route('/<news_id>', methods=['PATCH'])
+@jwt_required
 def patch_news(news_id):
+    user_id = get_jwt_identity()
     data = request.get_json()
-    service_alter_news_information(news_id, data)
-    return {'news altered'}, HTTPStatus.OK
+
+    if News.query.filter_by(id=news_id).first() is not None:
+        service_alter_news_information(news_id, data)
+
+    else:
+        return build_api_response(HTTPStatus.NOT_FOUND)
+
+    return build_api_response(HTTPStatus.OK)

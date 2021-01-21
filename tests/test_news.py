@@ -10,24 +10,22 @@ headers = {
 }
 
 
-
 def test_get_all_news_route_exists():
     data = requests.get(base_url, headers=headers)
     answer = requests.get(base_url, headers=headers)
-    expected = 200
-    assert answer.status_code == expected
+    assert answer.status_code == 200
 
-def test_post_news():    
-    post_url = base_url+'1/create'
+
+def test_post_news():
+    post_url = base_url+'/create'
     data = {
-        "title": "Livro saddassdkj",
+        "title": "Titulo exemplo",
         "subtitle": "Author",
-        "content": "Long sjdasddajskjnckn",
+        "content": "Descrição muita longa aqui...",
         "upvotes": 1,
         "downvotes": 1,
-        "create_at": "10/10/2010",
-        "approved": True
-        }
-    answer = requests.post(post_url,json=data,headers=headers)
-    assert answer.status_code == 200 
-        
+        "approved": "True",
+        "news_category": 1
+    }
+    answer = requests.post(post_url, json=data, headers=headers)
+    assert answer.status_code == 200

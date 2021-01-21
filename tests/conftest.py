@@ -4,7 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from environs import Env
 
-from app.configs.database import SQLAlchemySingleton
+from app.configs.database import SingletonSQLAlchemy
+
 
 @fixture(scope='session')
 def engine():
@@ -17,7 +18,7 @@ def tables(engine):
     app = __import__('app').create_app('teste')
     app_ctx = app.app_context()
     app_ctx.push()
-    db = SQLAlchemySingleton()
+    db = SingletonSQLAlchemy()
     db.create_all()
     yield
     db.drop_all()
