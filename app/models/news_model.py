@@ -7,8 +7,8 @@ db = SingletonSQLAlchemy()
 
 class News(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(50), unique=True, nullable=False)
-    subtitle = db.Column(db.String(500), unique=False, nullable=True)
+    title = db.Column(db.String(1024), unique=True, nullable=False)
+    subtitle = db.Column(db.Text, unique=False, nullable=True)
     content = db.Column(db.Text, unique=True, nullable=False)
     upvotes = db.Column(db.Integer, default=0, unique=False, nullable=True)
     downvotes = db.Column(db.Integer, default=0, unique=False, nullable=True)

@@ -8,7 +8,10 @@ from app.models.news_category_model import news_category
 from app.schema.news_schema import NewsSchema
 from app.services.http import build_api_response
 from app.services.news_services import service_alter_news_information
+from datetime import datetime
+from pytz import timezone
 
+fuso_horario = timezone('America/Sao_Paulo')
 bp_news = Blueprint('api_news', __name__, url_prefix='/news')
 news_schema = NewsSchema()
 
@@ -34,27 +37,33 @@ def get_news(news_id):
 @bp_news.route('/create', methods=['POST'])
 @jwt_required
 def create_news():
-    user_id = get_jwt_identity()
-    data = request.get_json()
-    news = News(
-        title=data['title'],
-        subtitle=data['subtitle'],
-        content=data['content'],
-        upvotes=data['upvotes'],
-        downvotes=data['downvotes'],
-        approved=data['approved'],
-        author=user_id
-    )
-    if "categories" in data:
-        for category_id in list(data["categories"]):
-            filtered_category = Category.query.filter_by(
-                id=category_id).first()
-            news.news_category.append(filtered_category)
-    db.session.add(news)
-    db.session.commit()
-    return {
-        'data': news_schema.dump(news)
-    }, HTTPStatus.OK
+    try:
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        news = News(
+            title=data['title'],
+            subtitle=data['subtitle'],
+            content=data['content'],
+            upvotes=data['upvotes'],
+            downvotes=data['downvotes'],
+            approved=data['approved'],
+            create_at=datetime.now(
+            ).astimezone(fuso_horario).strftime('%d/%m/%Y %H:%M:%S'),
+            author=user_id
+        )
+        if "categories" in data:
+            for category_id in list(data["categories"]):
+                filtered_category = Category.query.filter_by(
+                    id=category_id).first()
+                news.news_category.append(filtered_category)
+        db.session.add(news)
+        db.session.commit()
+        return {
+            'data': news_schema.dump(news)
+        }, HTTPStatus.OK
+
+    except IntegrityError:
+        return build_api_response(HTTPStatus.BAD_REQUEST)
 
 
 @bp_news.route('/<news_id>', methods=['DELETE'])

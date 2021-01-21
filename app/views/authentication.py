@@ -6,7 +6,7 @@ from app.services.user_services import create_user
 from app.services.http import build_api_response
 from app.models import User
 
-bp_auth = Blueprint('auth', __name__, url_prefix='/')
+bp_auth = Blueprint('auth', __name__)
 
 
 @bp_auth.route('/login', methods=['POST'])
@@ -18,7 +18,7 @@ def login():
         filtered_user = User.query.filter_by(email=email).first()
         if User.checkPassword(filtered_user, password):
             access_token = create_access_token(
-                identity=filtered_user.id, expires_delta=timedelta(days=7))
+                identity=filtered_user.id, expires_delta=timedelta(days=14))
             return {'token': access_token}
         return build_api_response(HTTPStatus.UNAUTHORIZED)
 
