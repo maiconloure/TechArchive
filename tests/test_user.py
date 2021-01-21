@@ -27,8 +27,3 @@ def create_user():
     }
     response = requests.post(create_url, json=data, headers=headers)
     assert response.status_code == 200
-
-
-def get_user():
-    get_url = base_url+'/'
-    data = requests.get(get_url, headers=headers)
